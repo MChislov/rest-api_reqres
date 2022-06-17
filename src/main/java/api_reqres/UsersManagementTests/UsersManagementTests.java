@@ -1,9 +1,9 @@
 package api_reqres.UsersManagementTests;
+import api_reqres.Resources;
 
 import org.junit.Test;
 
 import api_reqres.Specifications;
-import api_reqres.ResourceTests.BodyResponseListResource;
 
 import org.hamcrest.Matchers;
 import java.util.List;
@@ -11,6 +11,9 @@ import java.util.Date;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.*;
+import io.restassured.module.jsv.JsonSchemaValidator;
+
+
 
 public class UsersManagementTests {
 	private final static String URL = "https://reqres.in/";
@@ -29,6 +32,36 @@ public class UsersManagementTests {
 		 }
 
 	}
+	
+	@Test
+	public void UserListJsonSchemaValidation() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		given()
+		.when()
+		.get("api/users?page=2")
+		.then()
+		.body(JsonSchemaValidator.matchesJsonSchemaInClasspath(Resources.JsonUsersList));
+	}
+	
+	@Test
+	public void UserSingleJsonSchemaValidation() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		given()
+		.when()
+		.get("api/users/2")
+		.then()
+		.body(JsonSchemaValidator.matchesJsonSchemaInClasspath(Resources.JsonUsersSingle));
+	}	
+	
+	@Test
+	public void UserDoesNotExists() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(404));
+		given()
+		.when()
+		.get("api/users/23")
+		.then();
+	}	
+	
 	@Test
 	public void JsonValuesCheck() {
 		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
@@ -77,23 +110,7 @@ public class UsersManagementTests {
 	}
 	
 	@Test
-	public void ListResourceData() {
-		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
-		List<BodyResponseListResource> data = 
-				given()
-				.when()
-				.get("api/unknown")
-				.then().extract().body().jsonPath().getList("Datum", BodyResponseListResource.class);
-		Integer previos_year = 1900;
-		 for (BodyResponseListResource element : data) {
-			 assertTrue(element.getYear()>=previos_year);
-			 previos_year = element.getYear();
-		 }
-
-	}
-	
-	@Test
-	public void UpdateUserDateTime() {
+	public void UpdateUserPutDateTime() {
 		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
 		UserDataUpdate user = new UserDataUpdate("morpheus", "zion resident");
 		Date curDate = new Date();
@@ -102,6 +119,24 @@ public class UsersManagementTests {
 				.put("api/users/2")
 				.then()
 				.log().all()
+				.extract().as(UserDataUpdate.class);
+		System.out.println(curDate);
+		Date updateDate = userUpdate.getUpdatedAt();
+		System.out.println(curDate);
+		System.out.println(updateDate);
+		assertTrue(curDate.before(updateDate));
+	}
+	
+	@Test
+	public void UpdateUserPatchDateTime() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		UserDataUpdate user = new UserDataUpdate("morpheus", "zion resident");
+		Date curDate = new Date();
+		UserDataUpdate userUpdate = given()
+				.body(user)
+				.put("api/users/2")
+				.then()
+				.log().all().body(JsonSchemaValidator.matchesJsonSchemaInClasspath(Resources.JsonUsersUpdate))
 				.extract().as(UserDataUpdate.class);
 		System.out.println(curDate);
 		Date updateDate = userUpdate.getUpdatedAt();

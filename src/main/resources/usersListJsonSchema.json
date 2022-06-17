@@ -1,0 +1,104 @@
+{
+	"definitions": {},
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"page",
+		"per_page",
+		"total",
+		"total_pages",
+		"data",
+		"support"
+	],
+	"properties": {
+		"page": {
+			"type": "integer",
+			"examples": [
+				2
+			],
+			"default": 0
+		},
+		"per_page": {
+			"type": "integer",
+			"examples": [
+				6
+			],
+			"default": 0
+		},
+		"total": { 
+			"type": "integer",
+			"examples": [
+				12
+			],
+			"default": 0
+		},
+		"total_pages": {
+			"type": "integer",
+			"examples": [
+				2
+			],
+			"default": 0
+		},
+		"data": {
+			"type": "array",
+			"default": [],
+			"items":{ 
+				"type": "object",
+				"required": [
+					"id",
+					"email",
+					"first_name",
+					"last_name",
+					"avatar"
+				],
+				"properties": {
+					"id": { 
+						"type": "integer",
+						"examples": [
+							7
+						],
+						"default": 0
+					},
+					"email": {
+						"type": "string",
+						"examples": [
+							"michael.lawson@reqres.in"
+						],
+						"pattern": "^([a-zA-Z0-9_\\-\\.]+)@reqres\\.in$"
+					},
+					"first_name": {
+						"type": "string",
+						"pattern": "^[a-zA-Z]{3,}$"
+					},
+					"last_name": {
+						"type": "string",
+						"pattern": "^[a-zA-Z]{3,}$"
+					},
+					"avatar": {
+						"type": "string",
+						"pattern": "^https\\:\\/\\/reqres\\.in\\/img\\/faces\\/\\d{0,2}-image\\.jpg$"
+					}
+				}
+			}
+
+		},
+		"support": {
+			"type": "object",
+			"required": [
+				"url",
+				"text"
+			],
+			"properties": {
+				"url": { 
+					"type": "string",
+					"default": "https:\\/\\/reqres.in\\/#support-heading"
+				},
+				"text": {
+					"type": "string",
+					"default": "To keep ReqRes free, contributions towards server costs are appreciated!"
+				}
+			}
+		}
+
+	}
+}

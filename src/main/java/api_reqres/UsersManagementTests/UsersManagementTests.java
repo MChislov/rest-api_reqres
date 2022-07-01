@@ -12,6 +12,9 @@ import java.util.Date;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.*;
 import io.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBodyExtractionOptions;
 
 
 
@@ -81,7 +84,7 @@ public class UsersManagementTests {
 	}
 	
 	@Test
-	public void RegisterUserSusseccful() {
+	public void RegisterUserSuccessful() {
 		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
 		Integer id = 4;
 		String token = "QpwL5tke4Pnpja7X4";
@@ -94,6 +97,36 @@ public class UsersManagementTests {
 				.extract().as(BodyResponseRegistrationSuccessful.class);
 		assertEquals(id, registration.id);
 		assertEquals(token, registration.token);
+	}
+	
+	@Test
+	public void LoginUserSuccessful() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		String token = "QpwL5tke4Pnpja7X4";
+		UserDataRegister user = new UserDataRegister("eve.holt@reqres.in", "pistol");
+		BodyResponseRegistrationSuccessful login = given()
+				.body(user)
+				.post("api/register")
+				.then()
+				.log().all()
+				.extract().as(BodyResponseRegistrationSuccessful.class);
+		assertEquals(token, login.token);
+	}
+	
+	@Test
+	public void LoginUserUnsuccessful() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(400));
+		String error = "Missing password";
+		UserData user = new UserData("eve.holt@reqres.in");
+		BodyResponseMissedPassword failedLogin = given()
+				.body(user)
+				.post("api/register")
+				.then()
+				.log().body()
+				.extract()
+				.body().as(BodyResponseMissedPassword.class);
+		System.out.println(failedLogin.getError());
+		failedLogin.getError().equals(error);
 	}
 	
 	@Test

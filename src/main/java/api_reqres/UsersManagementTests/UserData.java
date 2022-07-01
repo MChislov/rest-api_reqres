@@ -12,6 +12,10 @@ public class UserData {
 	public UserData() {
 		super();
 	}
+	
+	public UserData(String email) {
+		this.email=email;
+	}
 
 	public UserData(Integer id, String email, String first_name, String last_name, String avatar) {
 		this.id = id;

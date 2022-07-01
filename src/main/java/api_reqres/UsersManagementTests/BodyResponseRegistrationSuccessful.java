@@ -7,6 +7,10 @@ public class BodyResponseRegistrationSuccessful {
 		public BodyResponseRegistrationSuccessful() {
 			super();
 		}
+
+	    public BodyResponseRegistrationSuccessful(String token) {
+			this.token = token;
+		}
 	    
 	    public BodyResponseRegistrationSuccessful(Integer id, String token) {
 			this.id = id;

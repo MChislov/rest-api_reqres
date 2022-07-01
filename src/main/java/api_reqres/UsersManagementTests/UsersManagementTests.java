@@ -8,9 +8,12 @@ import api_reqres.Specifications;
 import org.hamcrest.Matchers;
 import java.util.List;
 import java.util.Date;
+import java.util.Iterator;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.*;
+
+import io.qameta.allure.Description;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -177,4 +180,22 @@ public class UsersManagementTests {
 		System.out.println(updateDate);
 		assertTrue(curDate.before(updateDate));
 	}
+	
+	@Test
+	@Description("Pagination 2 page/2 per per page")
+	public void UsersListPagination() {
+		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		UserDataPaginated response = given()
+				.get("api/users?page=2&per_page=2")
+				.then()
+				.log().all()
+				.extract().as(UserDataPaginated.class);
+		System.out.println(response);
+		System.out.println(response.getPer_page());
+		for (UserData item:response.data) {
+			System.out.println(item.getId()); 			
+		}
+		System.out.println(response.data.get(0).getAvatar());
+	}
+	
 }

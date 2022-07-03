@@ -12,4 +12,8 @@ import org.junit.runner.RunWith;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({UsersManagementTests.class, ResourcesTests.class})
 
-public class RunTests {}
+public class RunTests {
+	public static void main(String[] args) {
+
+	}
+}

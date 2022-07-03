@@ -7,17 +7,13 @@ import api_reqres.Specifications;
 
 import org.hamcrest.Matchers;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
-
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.*;
 
 import io.qameta.allure.Description;
 import io.restassured.module.jsv.JsonSchemaValidator;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBodyExtractionOptions;
 
 
 
@@ -185,17 +181,24 @@ public class UsersManagementTests {
 	@Description("Pagination 2 page/2 per per page")
 	public void UsersListPagination() {
 		Specifications.installSpecification(Specifications.requestSpecs(URL), Specifications.responseSpecResponseStatus(200));
+		List<Integer> users_per_page_list=Arrays.asList(1, 2, 3, 4, 6);
+		for (Integer user_per_page : users_per_page_list) {
 		UserDataPaginated response = given()
-				.get("api/users?page=2&per_page=2")
+				.get("api/users?page=2&per_page=" + user_per_page)
 				.then()
 				.log().all()
 				.extract().as(UserDataPaginated.class);
 		System.out.println(response);
 		System.out.println(response.getPer_page());
-		for (UserData item:response.data) {
-			System.out.println(item.getId()); 			
-		}
-		System.out.println(response.data.get(0).getAvatar());
+		System.out.println(response.data.get(0).getId());
+		System.out.println("Data array size:\t" + response.data.size());
+		System.out.println("Per page:\t" + response.getPer_page());
+		System.out.println("Page:\t" + response.getPage());
+		System.out.println("Total:\t" + response.getTotal());	
+		System.out.println("Total pages:\t" + response.getTotal_pages());
+		assertTrue(user_per_page==response.getPer_page());
+		assertTrue(user_per_page==response.data.size());
+	}
 	}
 	
 }
